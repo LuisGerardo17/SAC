@@ -4,29 +4,38 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->increments('user_id');
+            $table->string('mail');
             $table->string('password');
-            $table->rememberToken();
+            $table->unsignedInteger('role_id');
+            $table->unsignedInteger('person_id');
+            $table->foreign('role_id')->references('role_id')->on('roles');
+            $table->foreign('person_id')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade')
+                  ->references('person_id')->on('people');
+
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('users');
     }
-};
+}
